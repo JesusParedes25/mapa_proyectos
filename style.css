@@ -1,0 +1,126 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+}
+#map {
+height: 100%;
+}
+.info {
+    padding: 6px 8px;
+    font: 20px/18px 'Montserrat', Arial, Helvetica, sans-serif; /* Use Montserrat, fall back to Arial or Helvetica */
+    background: white;
+    background: rgba(255,255,255,0.7); /* Slightly more transparency */
+    box-shadow: 0 0 15px rgba(0,0,0,0.25); /* Slightly darker shadow for more depth */
+    border-radius: 5px;
+    border: 1px solid #ddd; /* Add a light border */
+    color: #333; /* Darker text for better readability */
+}
+
+.info h4 {
+    margin: 0 0 10px; /* Increased bottom margin */
+    color: #555; /* Slightly darker color */
+    font-weight: 600; /* Make the title bolder */
+    letter-spacing: 0.5px; /* Add some letter spacing for modern look */
+}
+/* Estilos para el select de municipios */
+#municipiosSelect {
+    display: block;
+    width: 100%; /* O un ancho específico si es necesario */
+    max-width: 300px; /* Para no ocupar todo el ancho en pantallas grandes */
+    padding: 10px;
+    margin: 10px auto; /* Centrar si es un ancho específico */
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    font-size: 16px;
+    color: #333;
+    cursor: pointer;
+    outline: none;
+}
+
+#municipiosSelect:hover {
+    border-color: #bbb;
+}
+
+#municipiosSelect:focus {
+    border-color: #999;
+}
+
+/* Estilo para el contenedor de proyectos */
+#panelProyectos {
+    margin: 10px auto;
+    padding: 15px;
+    max-width: 300px; /* Ajustar según preferencias */
+    background: #f8f8f8;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* Estilos adicionales para el mapa */
+#map {
+    height: 90vh; /* Ajustar según preferencias */
+    width: 100%;
+    margin-top: 10px;
+}
+
+/* Asegúrate de que el selector de municipios no se superponga sobre el mapa */
+@media screen and (max-width: 600px) {
+    #municipiosSelect {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        width: auto;
+        max-width: none;
+    }
+}
+/* Estilo para la ventana modal */
+.modal {
+    display: none; /* Ocultar por defecto */
+    position: fixed; /* Mantener fijo en la pantalla */
+    z-index: 10000; /* Establecer un z-index alto para estar por encima de todo */
+    left: 0;
+    top: 0;
+    width: 100%; /* Ancho completo */
+    height: 100%; /* Altura completa */
+    overflow: auto; /* Habilitar scroll si es necesario */
+    background-color: rgb(0, 0, 0); /* Fondo negro */
+    background-color: rgba(0, 0, 0, 0.4); /* Negro con opacidad */
+  }
+  
+  /* Estilo para el contenido del modal */
+  .modal-content {
+    position: relative;
+    background-color: #fefefe;
+    margin: 10% auto; /* 10% desde la parte superior y centrado */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 50%; /* Puedes ajustar al ancho deseado */
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    animation-name: animatetop;
+    animation-duration: 0.4s
+  }
+  
+  /* Animación para que el modal entre desde la parte superior de la pantalla */
+  @keyframes animatetop {
+    from {top: -300px; opacity: 0}
+    to {top: 0; opacity: 1}
+  }
+  
+  /* Estilo para el botón de cerrar */
+  .close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+  }
+  
+  .close:hover,
+  .close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  
