@@ -2,11 +2,10 @@ html, body {
     margin: 0;
     padding: 0;
     height: 100%;
-    width: 100%;
+    overflow: hidden; /* Evita desplazamiento innecesario */
+    font-family: 'Montserrat', sans-serif;
 }
-#map {
-height: 100%;
-}
+
 .info {
     padding: 6px 8px;
     font: 20px/18px 'Montserrat', Arial, Helvetica, sans-serif; /* Use Montserrat, fall back to Arial or Helvetica */
@@ -25,12 +24,121 @@ height: 100%;
     letter-spacing: 0.5px; /* Add some letter spacing for modern look */
 }
 /* Estilos para el select de municipios */
+#sidebar {
+    position: fixed;
+    z-index: 1000;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 300px; /* Ajusta la anchura si es necesario */
+    background: #9f2241;
+    color: white;
+    overflow-y: auto;
+    box-shadow: 2px 0px 5px rgba(0,0,0,0.2);
+    padding: 20px; /* Agrega padding alrededor del contenido de la barra lateral */
+    box-sizing: border-box; /* Asegúrate de que el padding no afecte el ancho total */
+    font-family: 'Montserrat', sans-serif;
+}
+
+.sidebar-title {
+    padding: 10px 0;
+    background-color: #7d1c34;
+    text-align: center;
+    margin-bottom: 20px; /* Espacio debajo del título */
+}
+select {
+    width: calc(100% - 20px); /* Se ajusta al ancho del sidebar menos el padding */
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #fff; /* Borde blanco para los select */
+    border-radius: 4px;
+    background-color: #fff;
+    color: #333;
+    margin-left: 10px; /* Añade un margen a la izquierda */
+    margin-right: 10px; /* Añade un margen a la derecha */
+}
+#sidebar h1, #sidebar h2 {
+    color: white;
+    font-family: 'Montserrat', sans-serif;
+    border-radius: 10px;
+}
+
+#sidebar p {
+    color: #666;
+}
+
+#sidebar h2, #sidebar h3, #sidebar h4, #sidebar p, #sidebar li {
+    margin: 0 0 15px 0; /* Margen inferior para separar los elementos */
+    color: #333; /* Color de texto para títulos y párrafos */
+}
+
+#sidebar h2 {
+    font-size: 24px; /* Tamaño de fuente más grande para el título */
+    border-bottom: 1px solid #eee; /* Línea debajo del título */
+    padding-bottom: 10px; /* Espacio debajo del título */
+}
+
+#sidebar h3 {
+    font-size: 20px; /* Tamaño de fuente para subtítulos */
+}
+
+#sidebar h4 {
+    font-size: 18px; /* Tamaño de fuente para encabezados más pequeños */
+}
+
+#sidebar p, #sidebar li {
+    font-size: 16px; /* Tamaño de fuente para texto y listas */
+    line-height: 1.6; /* Altura de línea para una mejor legibilidad */
+}
+
+#sidebar ul {
+    list-style-type: none; /* No mostrar viñetas */
+    padding: 0; /* No dejar espacio interior en la lista */
+}
+
+#sidebar a {
+    text-decoration: none; /* No subrayar enlaces */
+    color: #007bff; /* Color para los enlaces */
+}
+
+#sidebar a:hover {
+    text-decoration: underline; /* Subrayar enlaces al pasar el mouse */
+}
+
+#sidebar select {
+    width: 100%;
+    padding: 8px 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #fff;
+}
+#sidebar button, #sidebar a {
+    display: inline-block;
+    padding: 8px 12px;
+    margin-bottom: 10px;
+    border: none;
+    border-radius: 4px;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    text-align: center;
+}
+
+@media (max-width: 600px) {
+    #sidebar {
+        padding: 10px;
+    }
+}
+
+/* Puedes añadir más estilos personalizados según sea necesario */
+
 #municipiosSelect {
     display: block;
     width: 100%; /* O un ancho específico si es necesario */
     max-width: 300px; /* Para no ocupar todo el ancho en pantallas grandes */
-    padding: 10px;
-    margin: 10px auto; /* Centrar si es un ancho específico */
+    padding: 5px;
+    margin: 10px 0; /* Centrar si es un ancho específico */
     border: 1px solid #ddd;
     border-radius: 8px;
     background-color: #fff;
@@ -51,8 +159,8 @@ height: 100%;
 
 /* Estilo para el contenedor de proyectos */
 #panelProyectos {
-    margin: 10px auto;
-    padding: 15px;
+    padding: 5px;
+    margin: 10px 0; /* Margen superior e inferior */
     max-width: 300px; /* Ajustar según preferencias */
     background: #f8f8f8;
     border-radius: 8px;
@@ -61,9 +169,14 @@ height: 100%;
 
 /* Estilos adicionales para el mapa */
 #map {
-    height: 90vh; /* Ajustar según preferencias */
-    width: 100%;
-    margin-top: 10px;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 250px; /* Ajustar al ancho de tu sidebar */
+    height: 100%; /* Ajustar según preferencias */
+    width: auto;
+    margin-top: 0px;
 }
 
 /* Asegúrate de que el selector de municipios no se superponga sobre el mapa */
@@ -123,4 +236,44 @@ height: 100%;
     text-decoration: none;
     cursor: pointer;
   }
+  .proyecto-container {
+    background-color: #f2f2f2; /* Fondo gris para cada proyecto */
+    margin-bottom: 10px; /* Espacio entre proyectos */
+    padding: 10px;
+    border-radius: 4px;
+    margin-left: 10px; /* Añade un margen a la izquierda */
+    margin-right: 10px; /* Añade un margen a la derecha */
+    color: black;
+}
+
+.proyecto-nombre, .proyecto-porcentaje {
+    display: block; /* Hace que cada elemento se muestre en su propia línea */
+    margin-bottom: 5px; /* Espacio entre el nombre del proyecto y el porcentaje */
+}
+
+.proyecto-porcentaje {
+    font-weight: bold;
+    color: #9f2241; /* Color del porcentaje */
+}
+
+#toggleSidebar {
+    position: absolute;
+    z-index: 1010; /* Más alto que la barra lateral para que se muestre encima */
+    top: 10px; /* Posición desde la parte superior del mapa */
+    left: 10px; /* Posición desde la izquierda del mapa */
+    cursor: pointer;
+    background-color: #9f2241; /* Color principal de la barra lateral */
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+  }
+  
+  /* Ajusta el #map si es necesario para permitir espacio para el botón */
+  #map {
+    transition: left 0.4s; /* Suaviza la transición de abrir/cerrar */
+    left: 250px; /* El ancho de tu barra lateral */
+    /* Resto de estilos */
+  }
+  
   

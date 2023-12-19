@@ -2,6 +2,7 @@
 var map = L.map('map', {
     center: [20.5791, -98.9621],
     zoom: 9,
+    zoomControl: false,
     minZoom:8,
     maxZoom: 9 // Establece aquí el nivel máximo de zoom que desees
 });
@@ -80,73 +81,101 @@ var geojson = L.geoJson(municipios_proyectos, {
 }).addTo(map);
 
 // Control de información
-var info = L.control();
-
+var info = L.control({ position: 'topright' });
 info.onAdd = function (map) {
     this._div = L.DomUtil.create('div', 'info');
     this.update();
     return this._div;
 };
-
-// Actualizar el control basado en las propiedades pasadas
 info.update = function (props) {
-    this._div.innerHTML = '<h4>Proyectos</h4>' +  (props ?
+    this._div.innerHTML = '<h4>Proyectos</h4>' + (props ?
         'Municipio: <b>' + props.NOMGEO + '</b><br />' + 'Proyectos: <b>' + props.Proyectos + '</b>' :
         'Pasa el cursor sobre un municipio');
 };
-
 info.addTo(map);
+// Selectores para municipios y dependencias
+var selectorMunicipio = document.getElementById('selectorMunicipio');
+var selectorDependencia = document.getElementById('selectorDependencia');
 
-// Función para mostrar proyectos en el panel
-function mostrarProyectos(municipio) {
-    var proyectos = proyectos1[municipio];
-    var html = proyectos ? proyectos.map(function(proyecto) {
-        return '<p>' + proyecto + '</p>';
-    }).join('') : 'No hay proyectos para este municipio.';
-    document.getElementById('panelProyectos').innerHTML = html;
+// Rellenar selector de municipios con opciones
+Object.keys(proyectos_filtros).forEach(function(municipio) {
+    var option = document.createElement('option');
+    option.value = municipio;
+    option.textContent = municipio;
+    selectorMunicipio.appendChild(option);
+});
+
+// Evento al cambiar selección de municipio
+selectorMunicipio.addEventListener('change', function() {
+    var dependencias = proyectos_filtros[this.value] || {};
+    selectorDependencia.innerHTML = '<option value="">-- Selecciona una dependencia --</option>'; // Limpiar y establecer opción por defecto
+    Object.keys(dependencias).forEach(function(dependencia) {
+        var option = document.createElement('option');
+        option.value = dependencia;
+        option.textContent = dependencia;
+        selectorDependencia.appendChild(option);
+    });
+    filtrarYMostrarProyectos(); // Actualizar proyectos
+});
+
+// Función para filtrar y mostrar proyectos
+function filtrarYMostrarProyectos() {
+    var municipioSeleccionado = selectorMunicipio.value;
+    var dependenciaSeleccionada = selectorDependencia.value;
+
+    // Filtrar proyectos basado en los selectores
+    var proyectosFiltrados = proyectos_filtros[municipioSeleccionado] && proyectos_filtros[municipioSeleccionado][dependenciaSeleccionada] 
+        ? proyectos_filtros[municipioSeleccionado][dependenciaSeleccionada] 
+        : [];
+
+    // Actualizar el contenido del div resultadosProyectos
+    var html = proyectosFiltrados.map(function(proyecto) {
+        return '<div class="proyecto-container">' +
+                    '<div class="proyecto-nombre">' + proyecto['Proyecto'] + '</div>' +
+                    '<div class="proyecto-porcentaje">' + Math.round(proyecto['Porcentaje de avance'] * 100) + '%</div>' +
+                '</div>';
+    }).join('');
+    document.getElementById('resultadosProyectos').innerHTML = html;
 }
 
-// Evento para manejar cambios en el selector de municipios
-document.getElementById('municipiosSelect').addEventListener('change', function() {
-    var municipioSeleccionado = this.value;
-    mostrarProyectos(municipioSeleccionado);
-});
-var customControl = L.control({position: 'topright'});
+selectorDependencia.addEventListener('change', filtrarYMostrarProyectos);
 
-customControl.onAdd = function (map) {
-    var div = L.DomUtil.create('div', 'custom-control');
-    // Aquí puedes incluir el HTML que necesitas para mostrar la información
-    div.innerHTML = '<strong>Municipio:</strong><br>Información aquí...';
-    return div;
-};
+// Dispara un evento 'change' para cargar las opciones de dependencia al inicio
+if (selectorMunicipio.options.length > 0) {
+    selectorMunicipio.dispatchEvent(new Event('change'));
+}
+;
 
-
-// Obtener el modal
-var modal = document.getElementById("modalProyectos");
-
-// Obtener el elemento que cierra el modal
-var span = document.getElementsByClassName("close")[0];
-
-// Cuando el usuario selecciona un municipio, mostrar el modal con la información de los proyectos
-document.getElementById('municipiosSelect').addEventListener('change', function() {
-    var municipioSeleccionado = this.value;
-    var proyectos = proyectos1[municipioSeleccionado];
-    var html = proyectos ? proyectos.map(function(proyecto) {
-        return '<p>' + proyecto + '</p>';
-    }).join('') : 'No hay proyectos para este municipio.';
+//Boton de abrir y cerrar
+document.addEventListener('DOMContentLoaded', function() {
+    var sidebar = document.getElementById('sidebar');
+    var mapElement = document.getElementById('map');
+    var toggleButton = document.getElementById('toggleSidebar');
     
-    document.getElementById('contenidoProyectos').innerHTML = html;
-    modal.style.display = "block";
-});
-
-// Cuando el usuario hace clic en <span> (x), cerrar el modal
-span.onclick = function() {
-    modal.style.display = "none";
-}
-
-// Cuando el usuario hace clic en cualquier lugar fuera del modal, cerrarlo
-window.onclick = function(event) {
-    if (event.target == modal) {
-        modal.style.display = "none";
-    }
-}
+    toggleButton.addEventListener('click', function() {
+      var isOpen = sidebar.style.left === '0px';
+      
+      if (isOpen) {
+        sidebar.style.left = '-300px'; // Esconde la barra lateral
+        mapElement.style.left = '0'; // Extiende el mapa
+        toggleButton.textContent = 'Abrir panel de información'; // Cambia el texto del botón
+        toggleButton.style.left = '10px'; // Mueve el botón hacia la izquierda
+      } else {
+        sidebar.style.left = '0px'; // Muestra la barra lateral
+        mapElement.style.left = '300px'; // Restablece el mapa
+        toggleButton.textContent = 'Cerrar'; // Cambia el texto del botón
+        toggleButton.style.left = '310px'; // Mueve el botón junto con la barra lateral
+      }
+  
+      // Ajusta el tamaño del mapa después de la transición
+      setTimeout(function() {
+        map.invalidateSize();
+      }, 300);
+    });
+  
+    // Inicializa el estado del sidebar y botón
+    sidebar.style.left = '0px'; // Barra lateral visible
+    mapElement.style.left = '300px'; // Espacio para la barra lateral
+    toggleButton.style.left = '310px'; // Botón se mueve con la barra lateral
+  });
+  
